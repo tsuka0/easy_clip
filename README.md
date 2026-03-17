@@ -3,19 +3,14 @@
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
 簡単に環境を構築出来て、すぐに実行を目標として作成しました。
-
-- GPUで動かしたい人はまずinstall_prereqs_autoreboot.batを実行しましょう
-- これは.NETランタイムとCUDA toolkitが含まれています(権限が必要です)
-- 実行したらパソコンを再起動しましょう
-  
-- NvidiaのGPUを使っている人はinstall_GPU.batを、そうじゃない人はinstall_CPU.batを実行してください。
-
+- zipファイルをダウンロードしましょう
+- install.batを実行しましょう
 - 黒い謎の画面(コマンドプロンプト)が消えるまで待ちましょう。
-
 - 黒い画面が消えたらrun.cmdを実行しましょう！(2回目以降はrun.cmdのみ実行してください)
 恐らく起動するはずです！！！
 
 - 起動せずに落ちてしまう人はつっかーへDMで相談してくれたら対応します。
+- また、バグもかなりあると思うのでそれも対応します  きっと。
 
 ...半分くらいAIに頼ってるぜ、悪かったな！！！！<br>
 (デザインセンス皆無なのでそこらへん全部AIに書かせました、モダンで良いね！)<br>
