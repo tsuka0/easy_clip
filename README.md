@@ -6,6 +6,7 @@
 
 - GPUで動かしたい人はまずinstall_prereqs_autoreboot.batを実行しましょう
 - これは.NETランタイムとCUDA toolkitが含まれています(権限が必要です)
+- 実行したらパソコンを再起動しましょう
   
 - NvidiaのGPUを使っている人はinstall_GPU.batを、そうじゃない人はinstall_CPU.batを実行してください。
 
