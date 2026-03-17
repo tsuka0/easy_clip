@@ -4,10 +4,14 @@ cd /d %~dp0
 set "ROOT_DIR=%~dp0"
 set "REPO_DIR=%ROOT_DIR%efficient-sam2"
 
-echo [1/6] Checking Python...
-where python >nul 2>&1
-if errorlevel 1 (
-  echo Python not found. Trying to install Python 3.11 via winget...
+echo [1/6] Checking Python 3.11...
+set "PY_CMD="
+where py >nul 2>&1
+if errorlevel 0 set "PY_CMD=py -3.11"
+set "PY311_EXE=%LocalAppData%\\Programs\\Python\\Python311\\python.exe"
+if exist "%PY311_EXE%" set "PY_CMD=%PY311_EXE%"
+if "%PY_CMD%"=="" (
+  echo Python 3.11 not found. Installing...
   where winget >nul 2>&1
   if errorlevel 1 (
     echo winget is not available. Opening Python download page...
@@ -24,8 +28,16 @@ if errorlevel 1 (
     pause
     exit /b 1
   )
+  set "PY_CMD="
+  where py >nul 2>&1
+  if errorlevel 0 set "PY_CMD=py -3.11"
+  if exist "%PY311_EXE%" set "PY_CMD=%PY311_EXE%"
 )
-for /f "delims=" %%i in ('python -c "import sys; print(f\"{sys.version_info.major}.{sys.version_info.minor}\")" 2^>nul') do set "PY_VER=%%i"
+if "%PY_CMD%"=="" (
+  echo Python 3.11 not found after install. Please install Python 3.11 and re-run.
+  exit /b 1
+)
+for /f "delims=" %%i in ('%PY_CMD% -c "import sys; print(f\"{sys.version_info.major}.{sys.version_info.minor}\")" 2^>nul') do set "PY_VER=%%i"
 if "%PY_VER%"=="" (
   echo Python not found after install. Please install Python 3.11 and re-run.
   exit /b 1
@@ -49,7 +61,7 @@ if %PY_MAJ% EQU 3 if %PY_MIN% LSS 11 (
 set "VENV_DIR=%ROOT_DIR%.venv_cpu"
 if not exist "%VENV_DIR%\\Scripts\\python.exe" (
   echo [2/6] Creating virtual environment...
-  python -m venv "%VENV_DIR%"
+  %PY_CMD% -m venv "%VENV_DIR%"
 )
 if not exist "%VENV_DIR%\\Scripts\\python.exe" (
   echo Failed to create virtual environment.
