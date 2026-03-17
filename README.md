@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
 簡単に環境を構築出来て、すぐに実行を目標として作成しました。
-- zipファイルをダウンロードしましょう
+- zipファイルをダウンロードしましょう(解凍してね!)
 - install.batを実行しましょう
 - 黒い謎の画面(コマンドプロンプト)が消えるまで待ちましょう。
 - 黒い画面が消えたらrun.cmdを実行しましょう！(2回目以降はrun.cmdのみ実行してください)
