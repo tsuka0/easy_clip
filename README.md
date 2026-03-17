@@ -2,6 +2,10 @@
 ## _use efficient-sam2 AI_
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
+## プレビュー的な奴
+<img width="1489" height="925" alt="スクリーンショット 2026-03-18 031625" src="https://github.com/user-attachments/assets/e03d49dd-2b93-48a2-849e-ae3471943544" />
+
+## インフォフォメーション
 簡単に環境を構築出来て、すぐに実行を目標として作成しました。
 - zipファイルをダウンロードしましょう(解凍してね!)
 - NvidiaのGPUを使っているならinstall_GPU.bat、それ以外の人はinstall_CPU.batを実行しましょう
@@ -34,11 +38,6 @@
 後、動画の出力GPU版ぶっ壊れてるらしい(これは俺のせいじゃないぞ！！)<br>
 最悪画像で頑張ろう！(((<br>
 
-
-
-## プレビュー的な奴
-<img width="1489" height="925" alt="スクリーンショット 2026-03-18 031625" src="https://github.com/user-attachments/assets/e03d49dd-2b93-48a2-849e-ae3471943544" />
-
 ## どうして最新のSAM3じゃなくてefficient-sam2なんだ???
 - A.SAM3はトークンの取得が必須だからです(これは例のAviutl2のプラグインも同様です)
 - その点、efficient-sam2ならトークンの取得無しで切り抜けるからです
@@ -53,4 +52,3 @@
 ## ふゅーちゃー
 
 - そんなものは無い(言ってください)
-
