@@ -4,6 +4,9 @@
 
 簡単に環境を構築出来て、すぐに実行を目標として作成しました。
 
+- GPUで動かしたい人はまずinstall_prereqs_autoreboot.batを実行しましょう
+- これは.NETランタイムとCUDA toolkitが含まれています(権限が必要です)
+  
 - NvidiaのGPUを使っている人はinstall_GPU.batを、そうじゃない人はinstall_CPU.batを実行してください。
 
 - 黒い謎の画面(コマンドプロンプト)が消えるまで待ちましょう。
