@@ -1,8 +1,8 @@
 # easy_clip
-## _(USE SAM2)_
+## _USE SAM3 AI_
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
-簡単に環境を構築出来て、すぐに試せる事を目標として作成しました。
+簡単に環境を構築出来て、すぐに実行を目標として作成しました。
 
 1.NvidiaのGPUを使っている人はinstall_GPU.batを、そうじゃない人はinstall_CPU.batを実行してください。
 2.黒い謎の画面(コマンドプロンプト)が消えるまで待ちましょう。
