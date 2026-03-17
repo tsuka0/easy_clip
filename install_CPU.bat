@@ -1,0 +1,121 @@
+@echo off
+setlocal EnableExtensions EnableDelayedExpansion
+cd /d %~dp0
+set "ROOT_DIR=%~dp0"
+set "REPO_DIR=%ROOT_DIR%efficient-sam2"
+
+echo [1/6] Checking Python...
+where python >nul 2>&1
+if errorlevel 1 (
+  echo Python not found. Trying to install Python 3.11 via winget...
+  where winget >nul 2>&1
+  if errorlevel 1 (
+    echo winget is not available. Opening Python download page...
+    start "" "https://www.python.org/downloads/windows/"
+    echo Install Python 3.11, then re-run install_CPU.bat.
+    pause
+    exit /b 1
+  )
+  winget install -e --id Python.Python.3.11
+  if errorlevel 1 (
+    echo winget failed. Opening Python download page...
+    start "" "https://www.python.org/downloads/windows/"
+    echo Install Python 3.11, then re-run install_CPU.bat.
+    pause
+    exit /b 1
+  )
+)
+
+set "VENV_DIR=%ROOT_DIR%.venv_cpu"
+if not exist "%VENV_DIR%\\Scripts\\python.exe" (
+  echo [2/6] Creating virtual environment...
+  python -m venv "%VENV_DIR%"
+)
+if not exist "%VENV_DIR%\\Scripts\\python.exe" (
+  echo Failed to create virtual environment.
+  exit /b 1
+)
+set "VENV_PY=%VENV_DIR%\\Scripts\\python.exe"
+
+echo [3/6] Upgrading pip...
+"%VENV_PY%" -m pip install --upgrade pip setuptools wheel
+
+echo [4/6] Installing PyTorch (CPU only)...
+set "TORCH_INDEX=https://download.pytorch.org/whl/cpu"
+"%VENV_PY%" -c "import torch, torchvision" >nul 2>&1
+if not errorlevel 1 (
+  echo PyTorch already installed. Skipping.
+) else (
+  "%VENV_PY%" -m pip uninstall -y torch torchvision torchaudio >nul 2>&1
+  "%VENV_PY%" -m pip install torch==2.5.1 torchvision==0.20.1 --index-url %TORCH_INDEX%
+)
+
+echo [5/6] Installing Efficient-SAM2 and app dependencies...
+if not exist "%REPO_DIR%\\sam2" (
+  echo Cloning Efficient-SAM2...
+  where git >nul 2>&1
+  if errorlevel 1 (
+    echo Git not found. Downloading zip with curl...
+  ) else (
+    git clone https://github.com/jingjing0419/Efficient-SAM2.git "%REPO_DIR%"
+  )
+  if errorlevel 1 (
+    echo Git clone failed. Downloading zip with curl...
+    set "ZIP_FILE=%TEMP%\\efficient-sam2.zip"
+    set "ZIP_DIR=%TEMP%\\efficient-sam2-src"
+    if exist "!ZIP_FILE!" del /f /q "!ZIP_FILE!"
+    if exist "!ZIP_DIR!" rmdir /s /q "!ZIP_DIR!"
+    curl -fL -o "!ZIP_FILE!" "https://github.com/jingjing0419/Efficient-SAM2/archive/refs/heads/main.zip"
+    if not exist "!ZIP_FILE!" (
+      echo curl download failed.
+      exit /b 1
+    )
+    powershell -Command "Expand-Archive -Path '!ZIP_FILE!' -DestinationPath '!ZIP_DIR!' -Force; $src=Join-Path '!ZIP_DIR!' 'Efficient-SAM2-main'; if (Test-Path $src) {Move-Item $src '%REPO_DIR%' -Force}"
+  )
+)
+if not exist "%REPO_DIR%\\sam2" (
+  echo Efficient-SAM2 repo not found. Please check antivirus/Windows Defender.
+  exit /b 1
+)
+pushd "%REPO_DIR%"
+"%VENV_PY%" -m pip install -e .
+popd
+"%VENV_PY%" -m pip install -r "%ROOT_DIR%requirements.txt"
+
+echo [6/6] Downloading Efficient-SAM2 checkpoint...
+set "MODEL_URL=https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt"
+set "MODEL_URL_ALT=https://dl.fbaipublicfiles.com/segment_anything_2/sam2.1_hiera_large.pt"
+set "MODEL_PATH=%ROOT_DIR%model\\sam2.1_hiera_large.pt"
+if not exist "%ROOT_DIR%model" mkdir "%ROOT_DIR%model"
+if exist "%MODEL_PATH%" (
+  echo Checkpoint already exists.
+) else (
+  echo Trying curl...
+  curl -fL -A "Mozilla/5.0" -o "%MODEL_PATH%" %MODEL_URL%
+  if not exist "%MODEL_PATH%" (
+    echo Primary download failed. Trying alternate URL...
+    curl -fL -A "Mozilla/5.0" -o "%MODEL_PATH%" %MODEL_URL_ALT%
+  )
+  if not exist "%MODEL_PATH%" (
+    echo Curl failed. Trying PowerShell...
+    powershell -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $ProgressPreference='SilentlyContinue'; Invoke-WebRequest -Uri %MODEL_URL% -OutFile '%MODEL_PATH%' -Headers @{\"User-Agent\"=\"Mozilla/5.0\"}"
+  )
+)
+set "MODEL_SIZE=0"
+for %%F in ("%MODEL_PATH%") do set "MODEL_SIZE=%%~zF"
+if "%MODEL_SIZE%"=="0" (
+  echo Download failed (file is empty).
+  exit /b 1
+)
+if %MODEL_SIZE% LSS 1000000 (
+  echo Download failed (file too small: %MODEL_SIZE% bytes).
+  exit /b 1
+)
+if not exist "%MODEL_PATH%" (
+  echo Download failed. Please re-run install_CPU.bat or check network access.
+  exit /b 1
+)
+
+echo.
+echo Setup complete. Run run.cmd to start the app.
+endlocal
