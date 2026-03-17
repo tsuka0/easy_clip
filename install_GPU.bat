@@ -25,6 +25,26 @@ if errorlevel 1 (
     exit /b 1
   )
 )
+for /f "delims=" %%i in ('python -c "import sys; print(f\"{sys.version_info.major}.{sys.version_info.minor}\")" 2^>nul') do set "PY_VER=%%i"
+if "%PY_VER%"=="" (
+  echo Python not found after install. Please install Python 3.11 and re-run.
+  exit /b 1
+)
+for /f "tokens=1,2 delims=." %%a in ("%PY_VER%") do set "PY_MAJ=%%a" & set "PY_MIN=%%b"
+if %PY_MAJ% LSS 3 (
+  echo Python %PY_VER% is too old. Install Python 3.11 and re-run.
+  start "" "https://www.python.org/downloads/windows/"
+  exit /b 1
+)
+if %PY_MAJ% EQU 3 if %PY_MIN% LSS 11 (
+  echo Python %PY_VER% is too old. Installing Python 3.11...
+  where winget >nul 2>&1
+  if errorlevel 1 (
+    start "" "https://www.python.org/downloads/windows/"
+    exit /b 1
+  )
+  winget install -e --id Python.Python.3.11
+)
 
 set "VENV_DIR=%ROOT_DIR%.venv_gpu"
 if not exist "%VENV_DIR%\\Scripts\\python.exe" (
